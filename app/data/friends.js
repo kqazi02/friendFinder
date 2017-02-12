@@ -1,3 +1,4 @@
+//create an array of user with dummy data
 var friendsArray = [
 	{
 		name: "Shri Parvarna Attapattu Jayasuriya Laxman Shiv Ram Krishna Shiv Venkata Raj Shekhar Shrinivassan Trijjipalli Eikparampir Parambadurra Chinna Swammi Muttha Swami Ved Gopal Ayer",
@@ -16,5 +17,5 @@ var friendsArray = [
 	}
 ];
 
-// Note how we export the array. This makes it accessible to other files using require.
+//Export the array to be called.
 module.exports = friendsArray;

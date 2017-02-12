@@ -1,73 +1,62 @@
-// ===============================================================================
-// LOAD DATA
-// We are linking our routes to a series of "data" sources.
-// These data sources hold arrays of information on table-data, waitinglist, etc.
-// ===============================================================================
-
+// Import the dummy data from friends.js file.
 var friendsData = require("../data/friends.js");
 
-console.log (friendsData);
-
-// ===============================================================================
-// ROUTING
-// ===============================================================================
-
+// export the functions, which will be called in the server.js file.
 module.exports = function(app) {
-	// API GET Requests
-	// Below code handles when users "visit" a page.
-	// In each of the below cases when a user visits a link
-	// (ex: localhost:PORT/api/admin... they are shown a JSON of the data in the table)
-	// ---------------------------------------------------------------------------
 
-	// app.get("/api/friends", function(req, res) {
-	//   res.json(friendsData);
-	// });
+	// Get request is made when the user visits the api/friends page.
+	// Show them all the people in the database.
+	app.get("/api/friends", function(req, res) {
+	  res.json(friendsData);
+	});
 
-
+	// Post request when the user submits the form on the questionnaire page
 	app.post("/api/friends", function(req, res) {
-		// Note the code here. Our "server" will respond to requests and let users know if they have a table or not.
-		// It will do this by sending out the value "true" have a table
 
+			//Store the user input for the questions in a variable.
+			//This should be an array with length of 10.
 			userAnswers = req.body.scores;
 
-			console.log ("user Answers " + userAnswers);
-
+			//This variable will be used to store the index of the person in the database
+			//who matches the best with the user.
 			var bestMatch = 0;
 
-			var score = 0;
+			//This variable will be used to determine which user has the "lowest" score
+			// in other words, who is the most similar to the user
+			//initializing to 41, because 40 is the maximum difference that two users can have
+			var score = 41;
 
+			//This variable will be used to compare current lowest score.
 			var newScore;
 
-			console.log ("friendsData length " + friendsData.length);
-
+			// Loop through the array of all the users in the database
 			for (var i = 0; i < friendsData.length; i++ ){
-			
+				
+				// set new score to 0
 				newScore = 0;
 
-				console.log("friend score " + friendsData[i].scores);
-
+				// Loop through the array of answers for each user
 				for (var j = 0; j < friendsData[i].scores.length; j ++){
 
+					// new score is the additions of the difference between the answers of current user
+					// and a user in the database.
 					newScore = newScore + (Math.abs(userAnswers[j] - friendsData[i].scores[j]));						
+				} // nested for loop ends here
 
-				}
-
-				console.log (newScore);
-
-				console.log (score);
-
-				if (newScore <= score){
+				// after the loop, if the newScore is less than current score, then score is replace by 
+				// the newScore, and best match index is changed to the current position in the loop
+				if (newScore < score){
 
 					score = newScore;
 					bestMatch = i;
-					console.log(bestMatch);
 				}
 
-			}
+			} // outer for loop ends here
 
+			//Push the current user to the array
 			friendsData.push(req.body);
-			bestMatch = bestMatch;
 
+			// send the data for the best match to the server
 			res.json(friendsData[bestMatch]);
 	});
 };
